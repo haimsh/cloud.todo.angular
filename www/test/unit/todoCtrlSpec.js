@@ -8,11 +8,21 @@
 		var todoStorage = {
 			storage: {},
 			get: function () {
-				return this.storage;
+				return this.storage.filter(function (val) {return val;});
 			},
 			put: function (value) {
-				this.storage = value;
-			}
+				this.storage[value.id] = value;
+			},
+            post: function (value) {
+                this.storage[value.id] = value;
+            },
+            myDelete: function (id) {
+                if (id < 0) {
+                    this.storage = {};
+                } else {
+                    delete this.storage[id];
+                }
+            }
 		};
 
 			// Load the module containing the app, only 'ng' is loaded by default.
@@ -110,19 +120,24 @@
 			var ctrl;
 
 			beforeEach(inject(function ($controller) {
-				todoList = [{
+				todoList = [null, {
+                        'id': 1,
 						'title': 'Uncompleted Item 0',
 						'completed': false
 					}, {
+                        'id': 2,
 						'title': 'Uncompleted Item 1',
 						'completed': false
 					}, {
+                        'id': 3,
 						'title': 'Uncompleted Item 2',
 						'completed': false
 					}, {
+                        'id': 4,
 						'title': 'Completed Item 0',
 						'completed': true
 					}, {
+                        'id': 6,
 						'title': 'Completed Item 1',
 						'completed': true
 					}];
@@ -143,7 +158,7 @@
 			});
 
 			it('should save Todos to local storage', function () {
-				expect(todoStorage.storage.length).toBe(5);
+				expect(todoStorage.get().length).toBe(5);
 			});
 
 			it('should remove Todos w/o title on saving', function () {

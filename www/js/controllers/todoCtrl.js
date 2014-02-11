@@ -7,7 +7,26 @@
  * - exposes the model to the template and provides event handlers
  */
 todomvc.controller('TodoCtrl', function TodoCtrl($scope, $routeParams, todoStorage, filterFilter) {
+    function Counter(start) {
+        var i = start;
+        return function () {
+            return ++i;
+        }
+    }
+
+    function findMaxId(arr) {
+        var currMax = 0;
+        for (var elem in arr) {
+            if (arr.hasOwnProperty(elem) && arr[elem].id > currMax) {
+                currMax = arr[elem].id;
+            }
+        }
+        return currMax;
+    }
+
 	var todos = $scope.todos = todoStorage.get();
+    var maxId = findMaxId(todos);
+    var idGenerator = Counter(maxId);
 
 	$scope.newTodo = '';
 	$scope.editedTodo = null;
@@ -16,9 +35,6 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $routeParams, todoStora
 		$scope.remainingCount = filterFilter(todos, { completed: false }).length;
 		$scope.completedCount = todos.length - $scope.remainingCount;
 		$scope.allChecked = !$scope.remainingCount;
-		if (newValue !== oldValue) { // This prevents unneeded calls to the local storage
-			todoStorage.put(todos);
-		}
 	}, true);
 
 	// Monitor the current route for changes and adjust the filter accordingly.
@@ -36,11 +52,14 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $routeParams, todoStora
 			return;
 		}
 
-		todos.push({
+        var newItem = {
+            id: idGenerator(),
 			title: newTodo,
 			completed: false
-		});
+		};
 
+        todoStorage.post(newItem);
+        todos.push(newItem);
 		$scope.newTodo = '';
 	};
 
@@ -56,7 +75,9 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $routeParams, todoStora
 
 		if (!todo.title) {
 			$scope.removeTodo(todo);
-		}
+		} else {
+            todoStorage.put(todo);
+        }
 	};
 
 	$scope.revertEditing = function (todo) {
@@ -66,17 +87,29 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $routeParams, todoStora
 
 	$scope.removeTodo = function (todo) {
 		todos.splice(todos.indexOf(todo), 1);
+        todoStorage.myDelete(todo.id);
 	};
 
 	$scope.clearCompletedTodos = function () {
-		$scope.todos = todos = todos.filter(function (val) {
-			return !val.completed;
-		});
+        todos.forEach(function (todo) {
+           if (todo.completed) {
+               todoStorage.myDelete(todo.id);
+           }
+        });
+        $scope.todos = todos = todos.filter(function (val) {
+            return !val.completed;
+        });
+//        $scope.todos = todos = todoStorage.get();
 	};
 
 	$scope.markAll = function (completed) {
 		todos.forEach(function (todo) {
 			todo.completed = !completed;
+            todoStorage.put(todo);
 		});
 	};
+
+    $scope.checkComplete = function (todo) {
+        setTimeout(function () {todoStorage.put(todo);}, 0);
+    };
 });
