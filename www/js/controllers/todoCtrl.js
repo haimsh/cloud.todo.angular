@@ -24,29 +24,35 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $routeParams, todoStora
         return currMax;
     }
 
-	var todos = $scope.todos = todoStorage.get();
-    var maxId = findMaxId(todos);
-    var idGenerator = Counter(maxId);
+    $scope.todos = [];
 
-	$scope.newTodo = '';
-	$scope.editedTodo = null;
+	var todos, idGenerator;
+    todoStorage.get(function (data) {
+        todos = $scope.todos = data;
+        var maxId = findMaxId(todos);
+        idGenerator = Counter(maxId);
+    });
 
-	$scope.$watch('todos', function (newValue, oldValue) {
-		$scope.remainingCount = filterFilter(todos, { completed: false }).length;
-		$scope.completedCount = todos.length - $scope.remainingCount;
-		$scope.allChecked = !$scope.remainingCount;
-	}, true);
+    $scope.newTodo = '';
+    $scope.editedTodo = null;
+    $scope.errorMessage = '';
 
-	// Monitor the current route for changes and adjust the filter accordingly.
-	$scope.$on('$routeChangeSuccess', function () {
-		var status = $scope.status = $routeParams.status || '';
+    $scope.$watch('todos', function (newValue, oldValue) {
+        $scope.remainingCount = filterFilter(todos, { completed: false }).length;
+        $scope.completedCount = todos.length - $scope.remainingCount;
+        $scope.allChecked = !$scope.remainingCount;
+    }, true);
 
-		$scope.statusFilter = (status === 'active') ?
-			{ completed: false } : (status === 'completed') ?
-			{ completed: true } : null;
-	});
+    // Monitor the current route for changes and adjust the filter accordingly.
+    $scope.$on('$routeChangeSuccess', function () {
+        var status = $scope.status = $routeParams.status || '';
 
-	$scope.addTodo = function () {
+        $scope.statusFilter = (status === 'active') ?
+        { completed: false } : (status === 'completed') ?
+        { completed: true } : null;
+    });
+
+    $scope.addTodo = function () {
 		var newTodo = $scope.newTodo.trim();
 		if (!newTodo.length) {
 			return;
