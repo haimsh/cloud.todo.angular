@@ -7,11 +7,13 @@
 todomvc.factory('todoStorage', function ($http, $location) {
 	var STORAGE_ID = 'todos-angularjs';
     var todos = {};
+    var reload;
 
     function objectToArray(obj) {
         var arr = [];
         for (var elem in obj) {
             if (obj.hasOwnProperty(elem)) {
+                obj[elem].completed = Boolean(obj[elem].completed);
                 arr.push(obj[elem]);
             }
         }
@@ -22,6 +24,7 @@ todomvc.factory('todoStorage', function ($http, $location) {
         switch (status) {
             case 500:
                 alert("Server encounter internal error");
+                reload();
                 break;
             case 400:
                 $location.path('/login');
@@ -29,6 +32,9 @@ todomvc.factory('todoStorage', function ($http, $location) {
     }
 
 	return {
+        init: function (reloadCallback) {
+            reload = reloadCallback;
+        },
 		get: function (callback) {
             $http.get('/item')
                 .success(function (data) {
@@ -40,40 +46,19 @@ todomvc.factory('todoStorage', function ($http, $location) {
             var sendTodo = JSON.parse(JSON.stringify(todo));
             sendTodo.completed = sendTodo.completed ? 1 : 0;
             $http.put('/item', sendTodo).error(handleError);
-            return;
-            if (!todos.hasOwnProperty(todo.id)) {
-                // TODO:
-            } else {
-                todos[todo.id] = todo;
-    			localStorage.setItem(STORAGE_ID, JSON.stringify(todos));
-            }
 		},
 
         post: function (todo) {
             var sendTodo = JSON.parse(JSON.stringify(todo));
-            delete sendTodo[completed];
+            delete sendTodo.completed;
             $http.post('/item', sendTodo).error(handleError);
-            return;
-            if (todos.hasOwnProperty(todo.id)) {
-                // TODO:
-            } else {
-                todos[todo.id] = todo;
-                localStorage.setItem(STORAGE_ID, JSON.stringify(todos));
-            }
         },
         myDelete: function (id) {
-            $http.delete('/item', id).error(handleError);
+            // For some reason, $http.delete() does not support body.
+            $http({
+                url: '/item', method: 'DELETE', data: {id: id}, headers: {'Content-Type': 'application/json'}
+            }).error(handleError).success(reload);
             return;
-            if (id === -1) {
-                for (var elem in todos) {
-                    if (todos.hasOwnProperty(elem) && todos[elem].completed) {
-                        delete todos[id];
-                    }
-                }
-            } else {
-                delete todos[id];
-            }
-            localStorage.setItem(STORAGE_ID, JSON.stringify(todos));
         }
 	};
 });

@@ -24,14 +24,20 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $routeParams, todoStora
         return currMax;
     }
 
-    $scope.todos = [];
+    var todos, idGenerator;
 
-	var todos, idGenerator;
-    todoStorage.get(function (data) {
-        todos = $scope.todos = data;
-        var maxId = findMaxId(todos);
-        idGenerator = Counter(maxId);
-    });
+    todos = $scope.todos = [];
+
+    function reloadData() {
+        todoStorage.get(function (data) {
+            todos = $scope.todos = data;
+            var maxId = findMaxId(todos);
+            idGenerator = Counter(maxId);
+        });
+    }
+
+    todoStorage.init(reloadData);
+    reloadData();
 
     $scope.newTodo = '';
     $scope.editedTodo = null;
@@ -60,7 +66,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $routeParams, todoStora
 
         var newItem = {
             id: idGenerator(),
-			title: newTodo,
+			value: newTodo,
 			completed: false
 		};
 
@@ -77,9 +83,9 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $routeParams, todoStora
 
 	$scope.doneEditing = function (todo) {
 		$scope.editedTodo = null;
-		todo.title = todo.title.trim();
+		todo.value = todo.value.trim();
 
-		if (!todo.title) {
+		if (!todo.value) {
 			$scope.removeTodo(todo);
 		} else {
             todoStorage.put(todo);
@@ -97,6 +103,8 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $routeParams, todoStora
 	};
 
 	$scope.clearCompletedTodos = function () {
+        todoStorage.myDelete(-1);
+        return;
         todos.forEach(function (todo) {
            if (todo.completed) {
                todoStorage.myDelete(todo.id);
