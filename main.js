@@ -4,7 +4,7 @@
 'use strict';
 
 (function () {
-    console.log("hello world");
+    var PORT = 8080;
     var Express = require('mini.express.haim.shachor/miniExpress');
     var app = Express();
     var data = {};
@@ -19,10 +19,9 @@
     app.use(Express.cookieParser());
     app.use(Express.bodyParser());
     app.use(getUser);
-    app.use(Express.static(__dirname + '/www'));
     app.get('/item', function (request, response) {
         // TODO: checks
-        var userData = data[getUser(request)];
+        var userData = data[request.username];
         response.send(userData);
     });
 
@@ -39,7 +38,8 @@
         var userData = data[request.username];
         var newItem = request.body;
         if (!itemContainField(newItem, ['value', 'id'])) {
-            //TODO
+            response.send(500, "item should be compromised of value and id.");
+            return;
         }
         newItem['completed'] = 0;
         if (userData.hasOwnProperty(newItem.id)) {
@@ -53,8 +53,9 @@
     app.put('/item', function (request, response) {
         var userData = data[request.username];
         var newItem = request.body;
-        if (!itemContainField(newItem, ['value', 'id'])) {
-            // TODO
+        if (!itemContainField(newItem, ['value', 'id', 'status'])) {
+            response.send(500, "item should be compromised of value, id and status.");
+            return;
         }
         if (!userData.hasOwnProperty(newItem.id)) {
             response.send(500, "There doesn't exist item with this ID: " + newItem.id);
@@ -67,8 +68,9 @@
     app.delete('/item', function (request, response) {
         var userData = data[request.username];
         var itemId = request.body;
-        if (!itemContainField(item, ['id'])) {
-            //todo
+        if (!itemContainField(itemId, ['id'])) {
+            response.send(500, "body should contain id field");
+            return;
         }
         if (itemId.id == -1) {
             for (var elem in userData) {
@@ -76,13 +78,19 @@
                     delete userData[elem];
                 }
             }
+            response.send(200);
         } else {
             if (userData.hasOwnProperty(itemId.id)) {
                 delete userData[itemId.id];
+                response.send(200);
+            } else {
+                response.send(500, "There doesn't exist item with this ID: " + itemId.id);
             }
         }
 
     });
 
-    app.listen(8080);
+    app.use(Express.static(__dirname + '/www'));
+
+    app.listen(PORT);
 })();
