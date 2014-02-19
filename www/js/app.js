@@ -20,6 +20,6 @@ var todomvc = angular.module('todomvc', ['ngRoute'])
                 controller: 'TodoCtrl',
                 templateUrl: 'todomvc-index.html'
             }).otherwise({
-                redirectTo: '/login'
+                redirectTo: '/'
             });
     });

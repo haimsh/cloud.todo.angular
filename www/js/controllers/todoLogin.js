@@ -8,7 +8,7 @@
  * - retrieves and persists the model via the todoStorage service
  * - exposes the model to the template and provides event handlers
  */
-todomvc.controller('TodoLogin', function TodoCtrl($scope, $routeParams) {
+todomvc.controller('TodoLogin', function TodoCtrl($scope, $location, $http) {
     $scope.password = '';
     $scope.username = '';
 
@@ -20,9 +20,16 @@ todomvc.controller('TodoLogin', function TodoCtrl($scope, $routeParams) {
 
     $scope.login = function () {
         assertFields();
-    }
+        $http.post('login', {
+            username: $scope.username,
+            password: $scope.password
+        }).success(function () {
+                $location.path('/');
+            });
+    };
 
     $scope.register = function () {
         assertFields();
+        $http.post('register', {username: $scope.username, password: $scope.password, fullName: $scope.username});
     }
 });

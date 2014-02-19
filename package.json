@@ -4,7 +4,8 @@
     "description": "TODO list site, managed on cloud",
     "author": "Haim Shachor<haim.shachor@mail.huij.ac.il>",
     "dependencies": {
-        "mini.express.haim.shachor": "0.0.5"
+        "mini.express.haim.shachor": "0.0.6",
+        "node-uuid": "1.4.1"
     },
     "engine": "node 0.10.22"
 }

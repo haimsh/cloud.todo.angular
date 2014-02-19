@@ -23,8 +23,9 @@ todomvc.factory('todoStorage', function ($http, $location) {
     function handleError(data, status) {
         switch (status) {
             case 500:
-                alert("Server encounter internal error");
-                reload();
+                alert("Server encounter internal error: " + data);
+                //TODO: put into some error message area.
+//                reload();
                 break;
             case 400:
                 $location.path('/login');

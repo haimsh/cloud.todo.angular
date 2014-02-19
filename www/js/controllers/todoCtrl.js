@@ -104,16 +104,6 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $routeParams, todoStora
 
 	$scope.clearCompletedTodos = function () {
         todoStorage.myDelete(-1);
-        return;
-        todos.forEach(function (todo) {
-           if (todo.completed) {
-               todoStorage.myDelete(todo.id);
-           }
-        });
-        $scope.todos = todos = todos.filter(function (val) {
-            return !val.completed;
-        });
-//        $scope.todos = todos = todoStorage.get();
 	};
 
 	$scope.markAll = function (completed) {
