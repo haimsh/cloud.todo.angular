@@ -9,27 +9,70 @@
  * - exposes the model to the template and provides event handlers
  */
 todomvc.controller('TodoLogin', function TodoCtrl($scope, $location, $http) {
-    $scope.password = '';
-    $scope.username = '';
+    $scope.passwordLogin = '';
+    $scope.usernameLogin = '';
+    $scope.passwordReg = '';
+    $scope.usernameReg = '';
+    $scope.passwordVerify = '';
+    $scope.fullName = '';
+    $scope.loginErrorMessage = '';
+    $scope.regErrorMessage = '';
 
-    function assertFields() {
-        if ($scope.username.length * $scope.password.length === 0) {
-            alert('Please fill require fields');
+
+
+    function assertLoginFields() {
+        if ($scope.usernameLogin.length ===0 ||
+            $scope.passwordLogin.length === 0) {
+            $scope.loginErrorMessage = 'Please fill require fields in order to login!';
+            return false;
+        } else {
+            $scope.loginErrorMessage = '';
+            return true;
         }
     }
 
     $scope.login = function () {
-        assertFields();
-        $http.post('login', {
-            username: $scope.username,
-            password: $scope.password
-        }).success(function () {
-                $location.path('/');
-            });
+        if (assertLoginFields()) {
+            $http.post('login', {
+                username: $scope.usernameLogin,
+                password: $scope.passwordLogin
+            }).success(function () {
+                    $location.path('/');
+                });
+        }
     };
 
+    function assertRegisterFields() {
+        if ($scope.usernameReg.length === 0 ||
+            $scope.passwordReg.length === 0 ||
+            $scope.fullName === 0) {
+            $scope.regErrorMessage = 'Please fill require fields in order to register!';
+            return false;
+        }
+        if ($scope.passwordReg !== $scope.passwordVerify) {
+            $scope.regErrorMessage = 'Confirmed password should be same as password!';
+            return false;
+        }
+        $scope.regErrorMessage = '';
+        return true;
+    }
+
+    function copyRegToLogin() {
+        $scope.usernameLogin = $scope.usernameReg;
+        $scope.passwordLogin = $scope.passwordReg;
+        $scope.passwordReg = '';
+        $scope.usernameReg = '';
+        $scope.passwordVerify = '';
+        $scope.fullName = '';
+    }
+
     $scope.register = function () {
-        assertFields();
-        $http.post('register', {username: $scope.username, password: $scope.password, fullName: $scope.username});
+        if (assertRegisterFields()) {
+            $http.post('register', {
+                username: $scope.usernameReg,
+                password: $scope.passwordReg,
+                fullName: $scope.fullName
+            }).success(copyRegToLogin);
+        }
     }
 });

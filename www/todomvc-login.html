@@ -1,11 +1,16 @@
 
 <section id="loginapp" ng-controller="TodoLogin">
     <form>
-        <p>Username: <input type="text" ng-model=username />*</p>
-        <p>Password: <input type="password" ng-model=password />*</p>
-        <p>
-            <input type="button" value="login" ng-click="login()"/>
-            <input type="button" value="register" ng-click="register()"/>
-        </p>
+        <p>Username: <input type="text" ng-model=usernameLogin />*</p>
+        <p>Password: <input type="password" ng-model=passwordLogin />*</p>
+        <p class="error">{{loginErrorMessage}}</p>
+        <p><input type="button" value="login" ng-click="login()"/></p>
+        <hr/>
+        <p>Full name: <input type="text" ng-model=fullName />*</p>
+        <p>Username: <input type="text" ng-model=usernameReg />*</p>
+        <p>Password: <input type="password" ng-model=passwordReg />*</p>
+        <p>Confirm paswword: <input type="password" ng-model=passwordVerify />*</p>
+        <p class="error">{{regErrorMessage}}</p>
+        <input type="button" value="register" ng-click="register()"/>
     </form>
 </section>
