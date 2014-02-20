@@ -31,7 +31,7 @@
             users[userCookie.username].activeLogin.time = Date.now();
             next();
         } else {
-            response.send(400);
+            response.send(400, {status: 0, msg: "failed to verify user details."});
         }
     }
 
@@ -56,15 +56,15 @@
         var userData = data[request.username];
         var newItem = request.body;
         if (!itemContainField(newItem, ['value', 'id'])) {
-            response.send(500, "item should be compromised of value and id.");
+            response.send(500, {status: 0, msg:"item should be compromised of value and id."});
             return;
         }
         newItem['completed'] = 0;
         if (userData.hasOwnProperty(newItem.id)) {
-            response.send(500, "There already exists item with this ID: " + newItem.id);
+            response.send(500, {status: 0, msg: "There already exists item with this ID: " + newItem.id});
         } else {
             userData[newItem.id] = newItem;
-            response.send(200);
+            response.send(200, {status: 1, msg: "OK"});
         }
     });
 
@@ -72,14 +72,14 @@
         var userData = data[request.username];
         var newItem = request.body;
         if (!itemContainField(newItem, ['value', 'id', 'status'])) {
-            response.send(500, "item should be compromised of value, id and status.");
+            response.send(500, {status: 0, msg: "item should be compromised of value, id and status."});
             return;
         }
         if (!userData.hasOwnProperty(newItem.id)) {
-            response.send(500, "There doesn't exist item with this ID: " + newItem.id);
+            response.send(500, {status: 0, msg: "There doesn't exist item with this ID: " + newItem.id});
         } else {
             userData[newItem.id] = newItem;
-            response.send(200);
+            response.send(200, {status: 1, msg: "OK"});
         }
     });
 
@@ -87,7 +87,7 @@
         var userData = data[request.username];
         var itemId = request.body;
         if (!itemContainField(itemId, ['id'])) {
-            response.send(500, "body should contain id field");
+            response.send(500, {status: 0, msg: "body should contain id field"});
             return;
         }
         if (itemId.id == -1) {
@@ -96,13 +96,13 @@
                     delete userData[elem];
                 }
             }
-            response.send(200);
+            response.send(200, {status: 1, msg: "OK"});
         } else {
             if (userData.hasOwnProperty(itemId.id)) {
                 delete userData[itemId.id];
-                response.send(200);
+                response.send(200, {status: 1, msg: "OK"});
             } else {
-                response.send(500, "There doesn't exist item with this ID: " + itemId.id);
+                response.send(500, {status: 0, msg: "There doesn't exist item with this ID: " + itemId.id});
             }
         }
 

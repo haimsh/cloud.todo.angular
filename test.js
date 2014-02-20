@@ -29,9 +29,32 @@
         readStream.body = "";
         readStream.on('data', function (data) {
             readStream.body += data;
+            console.log(readStream.body);
         });
     }
 
+    function testSuccessItem(res) {
+        res.on('error', function (err) {
+            console.error(err)
+        });
+        assert.equal(res.statusCode, 200);
+        readBody(res);
+        res.on('end', function () {
+            assert.deepEqual(res.body, JSON.stringify({status: 1, msg: "OK"}));
+        });
+        passTest();
+    }
+
+    function testErrItem(res, err) {
+        assert.equal(res.statusCode, err);
+        readBody(res);
+        res.on("end", function () {
+            var bodyOb = JSON.parse(res.body);
+            assert.equal(bodyOb.status, 0);
+            assert(bodyOb.hasOwnProperty("msg"));
+        });
+        passTest();
+    }
     function testSuccess(res) {
         res.on('error', function (err) {
             console.error(err)
@@ -44,6 +67,7 @@
         assert.equal(res.statusCode, err);
         passTest();
     }
+
 
     function testData(userCookie) {
         var timeoutCounterTestData = 0;
@@ -96,7 +120,7 @@
         setTimeout(function () {
             var message = '{"id": "1", "value":"item1_' + userId + '"}';
             sendMessage('post', message, function (res) {
-                testSuccess(res);
+                testSuccessItem(res);
                 testGet({"1": {"id": "1", "value": "item1_" + userId, "completed": 0}});
             });
         }, ++timeoutCounterTestData * TIME_OUT_DELAY);
@@ -105,7 +129,7 @@
         setTimeout(function () {
             var message = '{"id": "1", "value": "item1new_' + userId + '"}';
             sendMessage('post', message, function (res) {
-                testErr(res, 500);
+                testErrItem(res, 500);
                 testGet({"1": {"id": "1", "value": "item1_" + userId , "completed": 0}});
             });
         }, ++timeoutCounterTestData * TIME_OUT_DELAY);
@@ -114,7 +138,7 @@
         setTimeout(function () {
             var message = '{"id": "10", "value":"item10_' + userId + '"}';
             sendMessage('post', message, function (res) {
-                testSuccess(res);
+                testSuccessItem(res);
                 testGet({
                     "1": {"id": "1", "value": "item1_" + userId, "completed": 0},
                     "10": {"id": "10", "value": "item10_" + userId, "completed": 0}
@@ -127,7 +151,7 @@
         setTimeout(function () {
             var message = '{"id": "1", "value":"item1_' + userId + '", "completed": 1}';
             sendMessage('put', message, function (res) {
-                testSuccess(res);
+                testSuccessItem(res);
                 testGet({
                     "1": {"id": "1", "value": "item1_" + userId, "completed": 1},
                     "10": {"id": "10", "value": "item10_" + userId, "completed": 0}
@@ -139,7 +163,7 @@
         setTimeout(function () {
             var message = '{"id": "1", "value":"item1_' + userId + '", "completed": 0}';
             sendMessage('put', message, function (res) {
-                testSuccess(res);
+                testSuccessItem(res);
                 testGet({
                     "1": {"id": "1", "value": "item1_" + userId, "completed": 0},
                     "10": {"id": "10", "value": "item10_" + userId, "completed": 0}
@@ -151,7 +175,7 @@
         setTimeout(function () {
             var message = '{"id": "1", "value":"newName_' + userId + '", "completed": 0}';
             sendMessage('put', message, function (res) {
-                testSuccess(res);
+                testSuccessItem(res);
                 testGet({
                     "1": {"id": "1", "value": "newName_" + userId, "completed": 0},
                     "10": {"id": "10", "value": "item10_" + userId, "completed": 0}
@@ -163,7 +187,7 @@
         setTimeout(function () {
             var message = '{"id": "2", "value":"newName_' + userId + '", "completed": 0}';
             sendMessage('put', message, function (res) {
-                testErr(res, 500);
+                testErrItem(res, 500);
                 testGet({
                     "1": {"id": "1", "value": "newName_" + userId, "completed": 0},
                     "10": {"id": "10", "value": "item10_" + userId, "completed": 0}
@@ -176,7 +200,7 @@
         setTimeout(function () {
             var message = '{"id": "1"}';
             sendMessage('delete', message, function (res) {
-                testSuccess(res);
+                testSuccessItem(res);
                 testGet({"10": {"id": "10", "value": "item10_" + userId, "completed": 0}});
             });
         }, ++timeoutCounterTestData * TIME_OUT_DELAY);
@@ -185,7 +209,7 @@
         setTimeout(function () {
             var message = '{"id": "-1"}';
             sendMessage('delete', message, function (res) {
-                testSuccess(res);
+                testSuccessItem(res);
                 testGet({"10": {"id": "10", "value": "item10_" + userId, "completed": 0}});
             });
         }, ++timeoutCounterTestData * TIME_OUT_DELAY);
@@ -194,7 +218,7 @@
         setTimeout(function () {
             var message = '{"id": "2"}';
             sendMessage('delete', message, function (res) {
-                testErr(res, 500);
+                testErrItem(res, 500);
                 testGet({"10": {"id": "10", "value": "item10_" + userId, "completed": 0}});
             });
         }, ++timeoutCounterTestData * TIME_OUT_DELAY);
@@ -203,14 +227,14 @@
         setTimeout(function () {
             var message = '{"id": "10", "value":"item10_' + userId + '", "completed": 1}';
             sendMessage('put', message, function (res) {
-                testSuccess(res);
+                testSuccessItem(res);
                 testGet({"10": {"id": "10", "value": "item10_" + userId, "completed": 1}});
             });
         }, ++timeoutCounterTestData * TIME_OUT_DELAY);
         setTimeout(function () {
             var message = '{"id": "-1"}';
             sendMessage('delete', message, function (res) {
-                testSuccess(res);
+                testSuccessItem(res);
                 testGet({});
             });
         }, ++timeoutCounterTestData * TIME_OUT_DELAY);
@@ -219,7 +243,7 @@
         setTimeout(function () {
             var message = '{"id": "1"}';
             sendMessage('delete', message, function (res) {
-                testErr(res, 500);
+                testErrItem(res, 500);
                 testGet({});
             });
         }, ++timeoutCounterTestData * TIME_OUT_DELAY);
