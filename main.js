@@ -24,6 +24,7 @@
         if (typeof userCookie !== 'undefined' &&
             itemContainField(userCookie, ['username', 'key']) &&
             users.hasOwnProperty(userCookie.username) &&
+            request.get("x-id") === userCookie.key &&
             users[userCookie.username].activeLogin.key === userCookie.key &&
             Date.now() - users[userCookie.username].activeLogin.time < COOKIE_TIME &&
             Date.now() - users[userCookie.username].activeLogin.time >= 0) {
@@ -122,6 +123,7 @@
             domain: host, // In Express: request.host
             path: '/'
         });
+        response.set('x-id', users[username].activeLogin.key);
     }
 
     app.post('/login', function (request, response) {
@@ -161,5 +163,5 @@
 
     app.use(Express.static(__dirname + '/www'));
 
-    app.listen(PORT);
+    app.listen(Number(process.env.port || PORT));
 })();

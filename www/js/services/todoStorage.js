@@ -8,6 +8,7 @@ todomvc.factory('todoStorage', function ($http, $location) {
 	var STORAGE_ID = 'todos-angularjs';
     var todos = {};
     var reload;
+    var headers = {};
 
     function objectToArray(obj) {
         var arr = [];
@@ -36,8 +37,12 @@ todomvc.factory('todoStorage', function ($http, $location) {
         init: function (reloadCallback) {
             reload = reloadCallback;
         },
+
+        setId: function (id) {
+             headers = {"x-id": id};
+        },
 		get: function (callback) {
-            $http.get('/item')
+            $http.get('/item', {headers: headers})
                 .success(function (data) {
                     callback(objectToArray(data));
                 }).error(handleError);
@@ -46,18 +51,18 @@ todomvc.factory('todoStorage', function ($http, $location) {
 		put: function (todo) {
             var sendTodo = JSON.parse(JSON.stringify(todo));
             sendTodo.completed = sendTodo.completed ? 1 : 0;
-            $http.put('/item', sendTodo).error(handleError);
+            $http.put('/item', sendTodo, {headers: headers}).error(handleError);
 		},
 
         post: function (todo) {
             var sendTodo = JSON.parse(JSON.stringify(todo));
             delete sendTodo.completed;
-            $http.post('/item', sendTodo).error(handleError);
+            $http.post('/item', sendTodo, {headers: headers}).error(handleError);
         },
         myDelete: function (id) {
             // For some reason, $http.delete() does not support body.
             $http({
-                url: '/item', method: 'DELETE', data: {id: id}, headers: {'Content-Type': 'application/json'}
+                url: '/item', method: 'DELETE', data: {id: id}, headers: {'Content-Type': 'application/json', 'x-id': headers['x-id']}
             }).error(handleError).success(reload);
             return;
         }

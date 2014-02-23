@@ -70,6 +70,7 @@
 
 
     function testData(userCookie) {
+        var identification = JSON.parse(userCookie.substring(5)).key;
         var timeoutCounterTestData = 0;
         var userId = userCounter++;
         var connectionSettings = {
@@ -86,7 +87,8 @@
                 port: PORT,
                 path: '/item',
                 headers : {
-                    Cookie: userCookie
+                    Cookie: userCookie,
+                    'x-id': identification
                 }
             };
             http.get(getSettings, function (res) {
@@ -105,7 +107,8 @@
             connectionSettings.headers = {
                 "content-length": msg.length,
                 "content-type": "application/json",
-                Cookie: userCookie
+                Cookie: userCookie,
+                'x-id': identification
             };
             http.request(connectionSettings, callback).end(msg);
         }
@@ -307,7 +310,7 @@
     function runUserTest(res) {
         var cookie = res.headers["set-Cookie".toLowerCase()][0];
         assert(typeof cookie !== 'undefined');
-        cookie = cookie.split(";", 1); // take only user='{...}' part!
+        cookie = cookie.split(";", 1)[0]; // take only user='{...}' part!
         testData(cookie);
     }
 
