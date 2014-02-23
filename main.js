@@ -4,7 +4,7 @@
 'use strict';
 
 (function () {
-    var MYPORT = 8080;
+    var MYPORT = 5000;
     var COOKIE_TIME = 60000;
     var Express = require('mini.express.haim.shachor/miniExpress');
     var uuid = require('node-uuid');
