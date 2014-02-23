@@ -4,7 +4,7 @@
 'use strict';
 
 (function () {
-    var PORT = 8080;
+    var MYPORT = 8080;
     var EXPECTED_ASSERTS = 60;
     var TIME_OUT_DELAY = 4000;
 
@@ -74,7 +74,7 @@
         var timeoutCounterTestData = 0;
         var userId = userCounter++;
         var connectionSettings = {
-            port: PORT,
+            port: MYPORT,
             path: '/item'
         };
 
@@ -84,7 +84,7 @@
          */
         function testGet(todos) {
             var getSettings = {
-                port: PORT,
+                port: MYPORT,
                 path: '/item',
                 headers : {
                     Cookie: userCookie,
@@ -263,7 +263,7 @@
         });
         http.request({
             method: 'post',
-            port: PORT,
+            port: MYPORT,
             path: '/register',
             headers: {
                 "content-length": msg.length,
@@ -298,7 +298,7 @@
         });
         http.request({
             method: 'post',
-            port: PORT,
+            port: MYPORT,
             path: '/login',
             headers: {
                 "content-length": msg.length,
@@ -343,7 +343,7 @@
 
     // B.e testGet without cookie
     setTimeout( function () {
-        http.get("http://localhost:" + PORT + "/item", function (res) {
+        http.get("http://localhost:" + MYPORT + "/item", function (res) {
             testErr(res, 400);
         });
     }, ++timeOutEncounterMain * TIME_OUT_DELAY);
