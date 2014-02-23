@@ -6,7 +6,7 @@
 (function () {
     var MYPORT = 5000;
     var COOKIE_TIME = 60000;
-    var Express = require('mini.express.haim.shachor/miniExpress');
+    var Express = require('express');
     var uuid = require('node-uuid');
     var app = Express();
     var data = {};

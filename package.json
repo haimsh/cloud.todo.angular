@@ -8,7 +8,7 @@
     },
     "author": "Haim Shachor<haim.shachor@mail.huij.ac.il>",
     "dependencies": {
-        "mini.express.haim.shachor": "0.0.7",
+        "express": "3.x",
         "node-uuid": "1.4.1"
     },
     "engine": {
