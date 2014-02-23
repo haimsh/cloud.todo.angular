@@ -4,7 +4,7 @@
 'use strict';
 
 (function () {
-    var MYPORT = 8080;
+    var MYPORT = 5000;
     var EXPECTED_ASSERTS = 60;
     var TIME_OUT_DELAY = 4000;
 
