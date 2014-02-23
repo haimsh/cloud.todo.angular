@@ -1,0 +1,41 @@
+Tester test the following tests:
+
+1. register:
+    a. registering 2 users (success)
+    b. try to register again exists user (failure)
+2. login:
+    a. login with both users (success)
+    b. login with wrong password (failure)
+    c. login with non-exists user (failure)
+
+3. data:
+For both successful logins (from 2.a.) the tester take the
+session id, and test the database:
+    a. Get: tested after each change to db (with expected value).
+        i. In addition, tested without session identifier (failure)
+    b. post:
+        i. post new item (success)
+        ii. post with exist item (failure)
+        iii. post second item (success)
+    c. put:
+        i. change item completed status (success)
+        ii. changing back (success)
+        iii. change item name (success)
+        iv. change non-exists item (failure)
+    d. delete:
+        i. manually delete item (success)
+        ii. delete all when all item are active (success, do nothing)
+        iii. delete non-exists item (failure)
+        iv. delete all when exist completed items (success)
+        v. delete non-exists when list is empty (failure)
+
+The tests for both user interleave in time, when every TIME_OUT_DELAY each user
+send change request, and in order not to overload the server, the second user use
+1.5, 2.5, 3.5 * TIME_OUT_DELAY.
+
+One thing I don't test - request with the session id after it expired. I tested
+it manually, but adding it to the testing routine will make each test very long.
+
+I encounter problems enabling tests for the front-end, but the ex. requirements are:
+"a tester for all your the HTTP APIs" - means the back-end. I even couldn't run the
+original todomvc app front-end karma tests.
