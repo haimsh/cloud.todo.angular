@@ -1,0 +1,13 @@
+1. XSS: The site is safe against XSS since it sends its data via
+JSON, so during sending it write correctly special characters. In
+addition, later the server handle the input as object, and never
+"eval" it.
+
+2. XSRF: The site is safe against XSRF since in addition to
+authentication via cookies, it set the session id via special
+"x-id" HTTP header. This cause XSRF request to fail authentication.
+
+All those above answers are not exactly accurate, since our http
+protocol is http and not https (ex4 server don't support it), so
+all the communication between server and client is exposed (including
+password and session id).

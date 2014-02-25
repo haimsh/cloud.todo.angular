@@ -1,0 +1,14 @@
+1. describe what was hard
+The real hardness was to figure out how the cookies work. Only after lot of tries I
+figure out my site is already working in FF, and then I could search for differences
+between FF and Chrome. In case in the future you tell students to implement site with
+cookies, inform them that some browsers don't keep cookies for localhost domain.
+
+2. describe what was easy
+The easy part was to implement the basic "single user" on-cloud site. It required
+only few changes on the original code.
+
+3. general comments about the course
+Regarding the exam, I understand the pros of its current structure, but I want to
+mention that it bothers that you can hardly get 95 with this structure.
+

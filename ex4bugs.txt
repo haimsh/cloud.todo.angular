@@ -1,0 +1,37 @@
+Since code is on gitHub, all changes can be reviewed here:
+https://github.com/haimsh/miniExpress/compare/c9728ea3c0a7cc6d5e988082ff7c7c5e0e2e02a1...master
+c9728ea3c0a7cc6d5e988082ff7c7c5e0e2e02a1 is the submitted version of ex4, current
+master is published to npm as version 0.0.7 which is used by my ex5.
+
+Some of the commits are of advanced version, since each time I change the code, I had to
+republish to npm. Others changes regarding the npm publishing are Readme.mk file and the
+package.json file (with its history).
+
+Here are main changes (order by the "file changes" tab in the above link,
+line numbers refer to the old numbering), which refer to change in original ex4
+code files:
+
+miniExpress.js
+1. Safe invoking of "user-given" function by app.use(...) - adding try-catch (line 88).
+
+2. miniExpress.static() - stupid bag in the condition checking whether the
+wanted file is in source dir. I got penalty in Ex3, and since this service is
+going to be used on the web (Heroku), I fixed it (line 370).
+
+3. cookieParser() - don't try to parse the cookies if there are none (lines 414-418).
+
+4. json() and bodyParser() - in old flow, when type is not json, call next immediately,
+but missing return, cause (after next end execution) the flow to still try and parse
+the body, and then next was called again (NEW lines 438, 462).
+
+5. json() should parse even if content type is "application/json<and some more details>",
+not require only "application/json" with no additional words (line 428).
+
+
+miniHttp.js
+6. Added status code of 400 to list - this is not bug, it wasn't require on
+previous ex (NEW line 23).
+
+7. Headers split of key-value used string.split(":", 2). However, unlike other
+languages, "a:b:c".split(":",2) is ["a","b"], not ["a","b:c"], so I had to
+fix it (line 246).

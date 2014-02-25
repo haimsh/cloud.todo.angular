@@ -1,0 +1,7 @@
+Changes done in order to run the site via Express:
+ 1. In file package.json replace dependency of
+ "mini.express.haim.shachor": "0.0.7",
+ with: "express": "3.x",
+ 2. In file main.js replace require:
+ var Express = require('mini.express.haim.shachor/miniExpress');
+ with: var Express = require('express');
